@@ -41,8 +41,8 @@ export async function connectionKyoto(question: string, history: ChatMessages[])
       safetySettings: setupClient.safety_config,
       history: history.map((msg) => ({
         role: "user",
-        parts: [{ text: msg.parts[0] }],
-      })) as any,
+        parts: [{ text: msg.parts[0] as string }],
+      })),
     });
 
     const result = await app_chat.sendMessage(question);

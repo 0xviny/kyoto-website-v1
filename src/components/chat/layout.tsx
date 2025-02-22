@@ -1,7 +1,6 @@
 "use client";
 
 import { ChatProps } from "@/@types";
-import questionData from "@/@types/json/question.json";
 
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -82,7 +81,7 @@ export default function ChatLayout({ messages, isLoading, onSendMessage }: ChatP
                       return match ? (
                         <div className="relative">
                           <SyntaxHighlighter
-                            style={oneDark as any}
+                            style={oneDark as typeof oneDark}
                             language={match ? match[1] : undefined}
                             PreTag="div"
                           >
