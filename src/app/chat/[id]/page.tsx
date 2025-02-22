@@ -17,7 +17,7 @@ export default function ChatPageId() {
   const { messages, addMessages, setMessages } = useChat();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -62,7 +62,7 @@ export default function ChatPageId() {
 
   return (
     <>
-      <main className="flex h-screen">
+      <main className="flex h-screen overflow-hidden">
         {isSidebarOpen && <ChatSidebar />}
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -83,7 +83,7 @@ export default function ChatPageId() {
             />
           </div>
           <ChatInput onMessageSend={handleMessageSend} />
-          <p className="text-sm text-white/75">
+          <p className="text-xs text-white/75">
             A Kyoto pode cometer erros. Considere verificar informações importantes.
           </p>
         </section>

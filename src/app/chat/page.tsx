@@ -20,7 +20,7 @@ export default function ChatPage() {
 
   const [chatId, setChatId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const pathParts = window.location.pathname.split("/");
@@ -99,7 +99,7 @@ export default function ChatPage() {
   };
 
   return (
-    <main className="flex h-screen">
+    <main className="flex h-screen overflow-hidden">
       {isSidebarOpen && <ChatSidebar />}
       <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -116,7 +116,7 @@ export default function ChatPage() {
           <ChatLayout messages={messages} isLoading={isLoading} onSendMessage={handleMessageSend} />
         </div>
         <ChatInput onMessageSend={handleMessageSend} />
-        <p className="text-sm text-white/75">
+        <p className="text-xs text-white/75">
           A Kyoto pode cometer erros. Considere verificar informações importantes.
         </p>
       </section>
