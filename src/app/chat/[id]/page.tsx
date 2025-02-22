@@ -66,7 +66,7 @@ export default function ChatPageId() {
         {isSidebarOpen && <ChatSidebar />}
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="fixed top-4 left-4 text-white p-2 rounded"
+          className="fixed top-4 left-4 text-white p-2 rounded z-50"
         >
           {!isSidebarOpen ? <List /> : <X />}
         </button>
