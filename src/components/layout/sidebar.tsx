@@ -84,7 +84,7 @@ export default function ChatSidebar() {
   };
 
   return (
-    <aside className="w-full md:w-72 h-screen bg-zinc-800 text-white p-4 border-r border-zinc-900 fixed">
+    <aside className="w-full md:w-72 h-screen bg-zinc-800 text-white p-4 border-r border-zinc-900 fixed z-50">
       <ul className="relative top-16 space-y-2">
         {chatList.length > 0 ? (
           chatList.map((chat) => (
