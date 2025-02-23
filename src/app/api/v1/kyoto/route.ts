@@ -35,9 +35,9 @@ export async function POST(req: NextRequest) {
 }
 
 async function processQuestion(req: NextRequest, question: string, history: ChatMessages[]) {
-  const userKey = getUserKey(req);
+  /* const userKey = getUserKey(req);
   const rateLimitResponse = applyRateLimit(userKey, req);
-  // if (rateLimitResponse) return rateLimitResponse;
+ if (rateLimitResponse) return rateLimitResponse; */
 
   try {
     const response = await connectionKyoto(question, history);
