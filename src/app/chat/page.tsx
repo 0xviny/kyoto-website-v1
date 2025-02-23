@@ -237,7 +237,7 @@ export default function ChatPage() {
             <ul className="max-h-60 overflow-y-auto space-y-2">
               <li className="p-2 hover:bg-zinc-800 rounded-md">
                 <button
-                  onClick={() => router.push("/chat")}
+                  onClick={() => router.push("/")}
                   className="flex items-center gap-2 text-white"
                 >
                   <SquarePen size={18} /> Criar novo chat
