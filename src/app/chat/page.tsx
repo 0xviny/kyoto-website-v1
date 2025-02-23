@@ -62,9 +62,6 @@ export default function ChatPage() {
       setIsMobile(window.innerWidth < 768);
     };
 
-    if (isMobile) setIsSidebarOpen(false);
-    else setIsSidebarOpen(true);
-
     handleResize();
     window.addEventListener("resize", handleResize);
 
@@ -136,6 +133,9 @@ export default function ChatPage() {
 
     addMessages(newMessage);
     setIsLoading(true);
+
+    if (isMobile) setIsSidebarOpen(false);
+    else setIsSidebarOpen(true);
 
     try {
       const response = await fetch("/api/v1/kyoto", {
