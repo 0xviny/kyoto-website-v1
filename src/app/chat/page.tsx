@@ -71,7 +71,15 @@ export default function ChatPage() {
     }, {});
   };
 
-  const allChats: ChatItem[] = JSON.parse(localStorage.getItem("chat_list") || "[]");
+  const [allChats, setAllChats] = useState<ChatItem[]>([]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const chats = JSON.parse(localStorage.getItem("chat_list") || "[]");
+      setAllChats(chats);
+    }
+  }, []);
+
   const filteredChats = allChats.filter((chat) =>
     chat.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
