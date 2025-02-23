@@ -1,11 +1,4 @@
-# .htaccess
-
-# Ativar o módulo de reescrita
 RewriteEngine On
-
-# Bloquear acesso à API de fora
-RewriteCond %{HTTP_REFERER} !^https?://(www\.)?kyotobot\.site/ [NC]
-RewriteCond %{HTTP_REFERER} !^https?://kyotobot\.site/ [NC]
-RewriteCond %{HTTP_REFERER} !^https?://(www\.)?kyotobot\.vercel\.app/ [NC]
-RewriteCond %{HTTP_REFERER} !^https?://kyotobot\.vercel\.app/ [NC]
-RewriteRule ^api/ - [F,L]
+RewriteCond %{REMOTE_ADDR} !^76\.76\.21\.241$
+RewriteCond %{REMOTE_ADDR} !^66\.33\.60\.193$
+RewriteRule ^api/v1/kyoto - [F,L]
