@@ -194,7 +194,7 @@ export default function ChatPage() {
           )}
 
           <button
-            onClick={() => router.push("/chat")}
+            onClick={() => router.push("/")}
             className="text-white p-2 rounded-lg hover:bg-zinc-700 transition"
           >
             <SquarePen />
