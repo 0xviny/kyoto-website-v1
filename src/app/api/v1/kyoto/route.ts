@@ -1,13 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { applyRateLimit } from "@/utils/rateLimit";
 import { connectionKyoto } from "@/services/kyotoService";
 
 import { ChatMessages } from "@/@types";
-
-const getUserKey = (req: NextRequest) => {
-  return req.headers.get("x-forwarded-for") || req.headers.get("cf-connecting-ip") || req.headers.get("remote-addr") || "unknown";
-};
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -35,10 +30,6 @@ export async function POST(req: NextRequest) {
 }
 
 async function processQuestion(req: NextRequest, question: string, history: ChatMessages[]) {
-  /* const userKey = getUserKey(req);
-  const rateLimitResponse = applyRateLimit(userKey, req);
- if (rateLimitResponse) return rateLimitResponse; */
-
   try {
     const response = await connectionKyoto(question, history);
     return NextResponse.json({ text: response });
