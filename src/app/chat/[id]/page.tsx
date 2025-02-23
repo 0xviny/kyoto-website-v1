@@ -26,6 +26,7 @@ export default function ChatPageId() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -54,11 +55,26 @@ export default function ChatPageId() {
     };
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   const toggleSearchPopup = () => {
     setIsOpen(!isOpen);
-    setIsSidebarOpen(false)
+    if (isMobile) {
+      setIsSidebarOpen(false);
+    }
   };
-
+  
   const categorizeChats = (chats: ChatItem[]) => {
     const now = Date.now();
 
