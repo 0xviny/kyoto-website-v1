@@ -18,6 +18,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+      </head>
       <body className="bg-zinc-900 text-white">
         <ChatProvider>{children}</ChatProvider>
       </body>
