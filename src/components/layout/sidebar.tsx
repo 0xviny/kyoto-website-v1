@@ -8,6 +8,7 @@ import Notification from "./notifications";
 interface ChatItem {
   id: string;
   title: string;
+  timestamp: number;
 }
 
 export default function ChatSidebar() {
@@ -49,6 +50,31 @@ export default function ChatSidebar() {
     };
   }, []);
 
+  const categorizeChats = (chats: ChatItem[]) => {
+    const now = Date.now();
+
+    return chats.reduce<Record<string, ChatItem[]>>((acc, chat) => {
+      const diff = now - chat.timestamp;
+
+      let category = "Mais Antigos";
+
+      if (diff < 24 * 60 * 60 * 1000) {
+        category = "Hoje";
+      } else if (diff < 48 * 60 * 60 * 1000) {
+        category = "Ontem";
+      } else if (diff < 7 * 24 * 60 * 60 * 1000) {
+        category = "Últimos 7 Dias";
+      } else if (diff < 30 * 24 * 60 * 60 * 1000) {
+        category = "Últimos 30 Dias";
+      }
+
+      if (!acc[category]) acc[category] = [];
+      acc[category].push(chat);
+
+      return acc;
+    }, {});
+  };
+
   const deleteChat = (id: string) => {
     const updatedChats = chatList.filter((chat) => chat.id !== id);
     setChatList(updatedChats);
@@ -83,65 +109,68 @@ export default function ChatSidebar() {
     setDropdownOpen(null);
   };
 
+  const groupedChats = categorizeChats(chatList);
+
   return (
     <aside className="w-full md:w-72 h-screen bg-zinc-800 text-white p-4 border-r border-zinc-900 fixed z-50">
-      <ul className="relative top-16 space-y-2">
-        {chatList.length > 0 ? (
-          chatList.map((chat) => (
-            <li key={chat.id} className="relative group flex items-center justify-between">
-              <Link
-                href={`/chat/${chat.id}`}
-                className={`block px-3 py-2 flex-1 rounded-md transition-all ${
-                  pathname === `/chat/${chat.id}`
-                    ? "bg-zinc-700 text-white"
-                    : "hover:bg-zinc-700 text-gray-300"
-                }`}
-              >
-                {chat.title.length > 20 ? chat.title.slice(0, 25) + "..." : chat.title}
-              </Link>
-
-              <button
-                onClick={() => setDropdownOpen(dropdownOpen === chat.id ? null : chat.id)}
-                className="p-1"
-              >
-                <MoreVertical size={18} />
-              </button>
-
-              {dropdownOpen === chat.id && (
-                <div
-                  ref={dropdownRef}
-                  className="absolute right-3 top-7 w-40 bg-zinc-900 border border-zinc-700 shadow-md rounded-md z-20"
+      <ul className="relative top-16 space-y-4">
+        {Object.entries(groupedChats).slice().reverse().map(([category, chatList]) => (
+          <div key={category}>
+            <h3 className="text-gray-400 text-sm mb-2">{category}</h3>
+            {chatList.slice().reverse().map((chat) => (
+              <li key={chat.id} className="relative group flex items-center justify-between">
+                <Link
+                  href={`/chat/${chat.id}`}
+                  className={`block px-3 py-2 flex-1 rounded-md transition-all ${
+                    pathname === `/chat/${chat.id}`
+                      ? "bg-zinc-700 text-white"
+                      : "hover:bg-zinc-700 text-gray-300"
+                  }`}
                 >
-                  <button
-                    onClick={() => {
-                      setSelectedChatId(chat.id);
-                      setNewChatTitle(chat.title);
-                      setRenameModalOpen(true);
-                      setDropdownOpen(null);
-                    }}
-                    className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-zinc-700"
+                  {chat.title.length > 20 ? chat.title.slice(0, 25) + "..." : chat.title}
+                </Link>
+
+                <button
+                  onClick={() => setDropdownOpen(dropdownOpen === chat.id ? null : chat.id)}
+                  className="p-1"
+                >
+                  <MoreVertical size={18} />
+                </button>
+
+                {dropdownOpen === chat.id && (
+                  <div
+                    ref={dropdownRef}
+                    className="absolute right-3 top-7 w-40 bg-zinc-900 border border-zinc-700 shadow-md rounded-md z-20"
                   >
-                    <Pencil size={16} /> Renomear
-                  </button>
-                  <button
-                    onClick={() => saveChatLink(chat.id)}
-                    className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-zinc-700"
-                  >
-                    <Bookmark size={16} /> Salvar Link
-                  </button>
-                  <button
-                    onClick={() => confirmDeleteChat(chat.id)}
-                    className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:bg-red-700 hover:text-white"
-                  >
-                    <Trash size={16} /> Apagar
-                  </button>
-                </div>
-              )}
-            </li>
-          ))
-        ) : (
-          <p className="text-gray-400">Nenhum chat registrado...</p>
-        )}
+                    <button
+                      onClick={() => {
+                        setSelectedChatId(chat.id);
+                        setNewChatTitle(chat.title);
+                        setRenameModalOpen(true);
+                        setDropdownOpen(null);
+                      }}
+                      className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-zinc-700"
+                    >
+                      <Pencil size={16} /> Renomear
+                    </button>
+                    <button
+                      onClick={() => saveChatLink(chat.id)}
+                      className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-zinc-700"
+                    >
+                      <Bookmark size={16} /> Salvar Link
+                    </button>
+                    <button
+                      onClick={() => confirmDeleteChat(chat.id)}
+                      className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:bg-red-700 hover:text-white"
+                    >
+                      <Trash size={16} /> Apagar
+                    </button>
+                  </div>
+                )}
+              </li>
+            ))}
+          </div>
+        ))}
       </ul>
 
       <Modal

@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 
 import ChatLayout from "@/components/chat/layout";
 import ChatInput from "@/components/chat/input";
@@ -10,7 +10,14 @@ import { ChatMessages } from "@/@types";
 import { useChat } from "@/providers/chatProvider";
 
 import { useEffect, useState } from "react";
-import { List, X } from "lucide-react";
+import { List, Search, SquarePen, X } from "lucide-react";
+import Link from "next/link";
+
+interface ChatItem {
+  id: string;
+  title: string;
+  timestamp: number;
+}
 
 export default function ChatPageId() {
   const { id } = useParams();
@@ -18,6 +25,11 @@ export default function ChatPageId() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     if (id) {
@@ -27,6 +39,42 @@ export default function ChatPageId() {
       }
     }
   }, [id, setMessages]);
+
+  const toggleSearchPopup = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const categorizeChats = (chats: ChatItem[]) => {
+    const now = Date.now();
+
+    return chats.reduce<Record<string, ChatItem[]>>((acc, chat) => {
+      const diff = now - chat.timestamp;
+
+      let category = "Mais Antigos";
+
+      if (diff < 24 * 60 * 60 * 1000) {
+        category = "Hoje";
+      } else if (diff < 48 * 60 * 60 * 1000) {
+        category = "Ontem";
+      } else if (diff < 7 * 24 * 60 * 60 * 1000) {
+        category = "Últimos 7 Dias";
+      } else if (diff < 30 * 24 * 60 * 60 * 1000) {
+        category = "Últimos 30 Dias";
+      }
+
+      if (!acc[category]) acc[category] = [];
+      acc[category].push(chat);
+
+      return acc;
+    }, {});
+  };
+
+  const allChats: ChatItem[] = JSON.parse(localStorage.getItem("chat_list") || "[]");
+  const filteredChats = allChats.filter((chat) =>
+    chat.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const groupedFilteredChats = categorizeChats(filteredChats);
 
   const handleMessageSend = async (message: string) => {
     const newMessage: ChatMessages = { role: "user", parts: [message] };
@@ -64,12 +112,36 @@ export default function ChatPageId() {
     <>
       <main className="flex h-screen overflow-hidden">
         {isSidebarOpen && <ChatSidebar />}
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="fixed top-4 left-4 text-white p-2 rounded z-50"
+        <div
+          className={`fixed top-4 left-4 z-50 flex items-center ${
+            isSidebarOpen ? "w-full md:w-64 justify-between" : "space-x-2"
+          }`}
         >
-          {!isSidebarOpen ? <List /> : <X />}
-        </button>
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="text-white p-2 rounded-lg hover:bg-zinc-700 transition"
+          >
+            {!isSidebarOpen ? <List /> : <X />}
+          </button>
+
+          <div className="mr-5 md:mr-0">
+            {isSidebarOpen && (
+              <button
+                onClick={toggleSearchPopup}
+                className="text-white p-2 rounded-lg hover:bg-zinc-700 transition"
+              >
+                <Search />
+              </button>
+            )}
+
+            <button
+              onClick={() => router.push("/chat/")}
+              className="text-white p-2 rounded-lg hover:bg-zinc-700 transition"
+            >
+              <SquarePen />
+            </button>
+          </div>
+        </div>
         <section
           className={`flex-1 flex flex-col items-center text-white p-4 transition-all ${
             isSidebarOpen ? "ml-64" : "ml-0"
@@ -87,6 +159,71 @@ export default function ChatPageId() {
             A Kyoto pode cometer erros. Considere verificar informações importantes.
           </p>
         </section>
+
+        {isOpen && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-zinc-900 p-4 rounded-lg shadow-lg w-[500px] space-y-5">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Buscar em chats..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full p-2 rounded-md bg-zinc-800 text-white placeholder-gray-400 pr-8"
+                />
+                <button
+                  onClick={toggleSearchPopup}
+                  className="absolute top-1/2 right-2 transform -translate-y-1/2 text-gray-400 hover:text-white transition"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <ul className="max-h-60 overflow-y-auto space-y-2">
+                <li className="p-2 hover:bg-zinc-800 rounded-md">
+                  <button
+                    onClick={() => router.push("/chat/")}
+                    className="flex items-center gap-2 text-white"
+                  >
+                    <SquarePen size={18} /> Criar novo chat
+                  </button>
+                </li>
+
+                {Object.entries(groupedFilteredChats)
+                  .slice()
+                  .reverse()
+                  .map(([category, chatList]) => (
+                    <div key={category}>
+                      <h3 className="text-gray-400 text-sm mb-2">{category}</h3>
+                      {chatList.length > 0 ? (
+                        chatList.map((chat) => (
+                          <li
+                            key={chat.id}
+                            className="relative group flex items-center justify-between"
+                          >
+                            <Link
+                              href={`/chat/${chat.id}`}
+                              className={`block px-3 py-2 flex-1 rounded-md transition-all ${
+                                pathname === `/chat/${chat.id}`
+                                  ? "bg-zinc-700 text-white"
+                                  : "hover:bg-zinc-700 text-gray-300"
+                              }`}
+                            >
+                              {chat.title.length > 20
+                                ? chat.title.slice(0, 100) + "..."
+                                : chat.title}
+                            </Link>
+                          </li>
+                        ))
+                      ) : (
+                        <p className="text-gray-400">Nenhum chat encontrado...</p>
+                      )}
+                    </div>
+                  ))}
+              </ul>
+            </div>
+          </div>
+        )}
       </main>
     </>
   );
