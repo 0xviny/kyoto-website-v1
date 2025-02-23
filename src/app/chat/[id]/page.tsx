@@ -70,6 +70,14 @@ export default function ChatPageId() {
   }, []);
 
   useEffect(() => {
+    if (isMobile) {
+      setIsSidebarOpen(false);
+    } else {
+      setIsSidebarOpen(true);
+    }
+  });
+
+  useEffect(() => {
     const storedChats = localStorage.getItem("chat_list");
     if (storedChats) {
       setAllChats(JSON.parse(storedChats));
@@ -118,9 +126,6 @@ export default function ChatPageId() {
     const newMessage: ChatMessages = { role: "user", parts: [message] };
     addMessages(newMessage);
     setIsLoading(true);
-
-    if (isMobile) setIsSidebarOpen(false);
-    else setIsSidebarOpen(true);
 
     try {
       const response = await fetch("/api/v1/kyoto", {

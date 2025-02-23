@@ -7,7 +7,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 import { useEffect, useState } from "react";
-import { Copy, CopyCheckIcon, Edit3 } from "lucide-react";
+import { AudioLines, Copy, CopyCheckIcon, Edit3 } from "lucide-react";
 import { generateQuestions } from "@/services/generateQuestions";
 import { generateResponse } from "@/services/generateResponse";
 import { usePathname } from "next/navigation";
@@ -17,6 +17,7 @@ export default function ChatLayout({ messages, isLoading, onSendMessage }: ChatP
   const [randomQuestion, setRandomQuestion] = useState<string[]>([]);
   const [editMessageIndex, setEditMessageIndex] = useState<number | null>(null);
   const [editedMessage, setEditedMessage] = useState<string>("");
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
 
   const currentChatId = usePathname().split("/")[2];
 
@@ -29,6 +30,39 @@ export default function ChatLayout({ messages, isLoading, onSendMessage }: ChatP
 
     loadQuestions();
   }, []);
+
+  useEffect(() => {
+    const loadVoices = () => {
+      const availableVoices = window.speechSynthesis.getVoices();
+      console.log("Vozes disponíveis:", availableVoices);
+      setVoices(availableVoices);
+    };
+
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+    loadVoices();
+
+    return () => {
+      window.speechSynthesis.onvoiceschanged = null;
+    };
+  }, []);
+
+  const handlePlayAudio = (code: string, index: number) => {
+    const cleanText = code.replace(/[\p{Emoji}]/gu, "");
+
+    const synth = window.speechSynthesis;
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+
+    const voice =
+      voices.find((v) => v.name.includes("Maria") || v.name.includes("Google")) || voices[0];
+
+    if (voice) utterance.voice = voice;
+
+    utterance.lang = "pt-BR";
+    utterance.rate = 1.5;
+    utterance.pitch = 1.2;
+
+    synth.speak(utterance);
+  };
 
   const handleCopyCode = (code: string, index: number) => {
     navigator.clipboard.writeText(code);
@@ -45,8 +79,8 @@ export default function ChatLayout({ messages, isLoading, onSendMessage }: ChatP
 
   const handleSaveEditedMessage = async (index: number) => {
     if (editedMessage.trim() !== "") {
-      const updatedMessages = [...messages]; // Criar uma cópia do array
-      updatedMessages[index].parts[0] = editedMessage; // Atualizar a mensagem editada
+      const updatedMessages = [...messages];
+      updatedMessages[index].parts[0] = editedMessage;
 
       const botResponse = await generateResponse(editedMessage);
 
@@ -59,7 +93,6 @@ export default function ChatLayout({ messages, isLoading, onSendMessage }: ChatP
         });
       }
 
-      // Salvar no localStorage
       localStorage.setItem(`chat_message/${currentChatId}`, JSON.stringify(updatedMessages));
 
       setEditMessageIndex(null);
@@ -157,22 +190,33 @@ export default function ChatLayout({ messages, isLoading, onSendMessage }: ChatP
                   </ReactMarkdown>
                 )}
                 {msg.role === "model" && (
-                  <button
-                    onClick={() =>
-                      handleCopyCode(
-                        Array.isArray(msg.parts) && msg.parts.length > 0 ? msg.parts[0] : "",
-                        index
-                      )
-                    }
-                    className="absolute mt-2 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                    style={{ bottom: "-2.5rem" }}
-                  >
-                    {copyCode ? (
-                      <CopyCheckIcon className="w-6 h-6" />
-                    ) : (
-                      <Copy className="w-6 h-6" />
-                    )}
-                  </button>
+                  <div className="absolute left-0 flex gap-2" style={{ bottom: "-2.5rem" }}>
+                    <button
+                      onClick={() =>
+                        handleCopyCode(
+                          Array.isArray(msg.parts) && msg.parts.length > 0 ? msg.parts[0] : "",
+                          index
+                        )
+                      }
+                      className="mt-2 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                      style={{ bottom: "-2.5rem" }}
+                    >
+                      {copyCode ? (
+                        <CopyCheckIcon className="w-6 h-6" />
+                      ) : (
+                        <Copy className="w-6 h-6" />
+                      )}
+                    </button>
+                    <button
+                      onClick={() =>
+                        handlePlayAudio(Array.isArray(msg.parts) ? msg.parts[0] : "", index)
+                      }
+                      className="mt-2 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                      style={{ bottom: "-2.5rem" }}
+                    >
+                      <AudioLines className="w-6 h-6" />
+                    </button>
+                  </div>
                 )}
                 {msg.role !== "model" && index === messages.length - 2 && (
                   <button

@@ -12,7 +12,7 @@ import { generateChatTitle } from "@/services/generateTitle";
 import { List, Search, SquarePen, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 interface ChatItem {
@@ -77,6 +77,14 @@ export default function ChatPage() {
     }
   };
 
+  useEffect(() => {
+    if (isMobile) {
+      setIsSidebarOpen(false);
+    } else {
+      setIsSidebarOpen(true);
+    }
+  });
+
   const categorizeChats = (chats: ChatItem[]) => {
     const now = Date.now();
 
@@ -133,9 +141,6 @@ export default function ChatPage() {
 
     addMessages(newMessage);
     setIsLoading(true);
-
-    if (isMobile) setIsSidebarOpen(false);
-    else setIsSidebarOpen(true);
 
     try {
       const response = await fetch("/api/v1/kyoto", {

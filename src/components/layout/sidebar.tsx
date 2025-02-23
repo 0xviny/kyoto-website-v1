@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { MoreVertical, Trash, Pencil, Bookmark, Trash2 } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { MoreVertical, Trash, Pencil, Bookmark, Trash2, Sparkles } from "lucide-react";
 import Modal from "./modals";
 import Notification from "./notifications";
 
@@ -20,7 +20,9 @@ export default function ChatSidebar() {
   const [newChatTitle, setNewChatTitle] = useState<string>("");
   const [notificationVisible, setNotificationVisible] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
+
   const pathname = usePathname();
+  const route = useRouter();
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -86,6 +88,12 @@ export default function ChatSidebar() {
     localStorage.setItem("chat_list", JSON.stringify(updatedChats));
     setDeleteModalOpen(false);
     setDropdownOpen(null);
+  };
+
+  const confirmDeleteAllChats = () => {
+    setDeleteModalOpen(true);
+    setDropdownOpen(null);
+    deleteAllChats();
   };
 
   const confirmDeleteChat = (id: string) => {
@@ -191,10 +199,17 @@ export default function ChatSidebar() {
       </ul>
 
       <button
-        onClick={deleteAllChats}
+        onClick={confirmDeleteAllChats}
         className="absolute bottom-4 right-4 p-2 text-red-600 rounded-lg hover:bg-zinc-700 transition"
       >
         <Trash2 />
+      </button>
+
+      <button
+        onClick={() => route.push("/download")}
+        className="absolute flex items-center justify-center bottom-4 left-4 p-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-700 transition"
+      >
+        <Sparkles className="inline-block mr-2 text-yellow-400" /> Baixe nosso aplicativo!
       </button>
 
       <Modal
