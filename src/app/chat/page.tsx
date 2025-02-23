@@ -58,6 +58,7 @@ export default function ChatPage() {
 
   const toggleSearchPopup = () => {
     setIsOpen(!isOpen);
+    setIsSidebarOpen(false)
   };
 
   const categorizeChats = (chats: ChatItem[]) => {
@@ -193,7 +194,7 @@ export default function ChatPage() {
           )}
 
           <button
-            onClick={() => router.push("/chat/")}
+            onClick={() => router.push("/chat")}
             className="text-white p-2 rounded-lg hover:bg-zinc-700 transition"
           >
             <SquarePen />
@@ -236,7 +237,7 @@ export default function ChatPage() {
             <ul className="max-h-60 overflow-y-auto space-y-2">
               <li className="p-2 hover:bg-zinc-800 rounded-md">
                 <button
-                  onClick={() => router.push("/chat/")}
+                  onClick={() => router.push("/chat")}
                   className="flex items-center gap-2 text-white"
                 >
                   <SquarePen size={18} /> Criar novo chat
