@@ -12,7 +12,7 @@ import { generateChatTitle } from "@/services/generateTitle";
 import { List, Search, SquarePen, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 interface ChatItem {
@@ -30,6 +30,7 @@ export default function ChatPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const pathname = usePathname();
 
@@ -40,6 +41,19 @@ export default function ChatPage() {
     if (potentialId && potentialId !== "chat") {
       setChatId(potentialId);
     }
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const toggleSearchPopup = () => {
@@ -202,7 +216,7 @@ export default function ChatPage() {
 
       {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-zinc-900 p-4 rounded-lg shadow-lg w-[500px] space-y-5">
+          <div ref={modalRef} className="bg-zinc-900 p-4 rounded-lg shadow-lg w-[500px] space-y-5">
             <div className="relative">
               <input
                 type="text"

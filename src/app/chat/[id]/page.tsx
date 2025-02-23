@@ -9,7 +9,7 @@ import ChatSidebar from "@/components/layout/sidebar";
 import { ChatMessages } from "@/@types";
 import { useChat } from "@/providers/chatProvider";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { List, Search, SquarePen, X } from "lucide-react";
 import Link from "next/link";
 
@@ -27,6 +27,7 @@ export default function ChatPageId() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const pathname = usePathname();
   const router = useRouter();
@@ -39,6 +40,19 @@ export default function ChatPageId() {
       }
     }
   }, [id, setMessages]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const toggleSearchPopup = () => {
     setIsOpen(!isOpen);
@@ -162,7 +176,10 @@ export default function ChatPageId() {
 
         {isOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-zinc-900 p-4 rounded-lg shadow-lg w-[500px] space-y-5">
+            <div
+              ref={modalRef}
+              className="bg-zinc-900 p-4 rounded-lg shadow-lg w-[500px] space-y-5"
+            >
               <div className="relative">
                 <input
                   type="text"
