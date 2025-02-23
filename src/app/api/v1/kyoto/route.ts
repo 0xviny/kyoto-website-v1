@@ -5,6 +5,10 @@ import { connectionKyoto } from "@/services/kyotoService";
 
 import { ChatMessages } from "@/@types";
 
+const getUserKey = (req: NextRequest) => {
+  return req.headers.get("x-forwarded-for") || req.headers.get("cf-connecting-ip") || req.headers.get("remote-addr") || "unknown";
+};
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const question = searchParams.get("question");
@@ -13,7 +17,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ response: "Você precisa enviar uma pergunta!" }, { status: 400 });
   }
 
-  return await processQuestion(question, []);
+  return await processQuestion(req, question, []);
 }
 
 export async function POST(req: NextRequest) {
@@ -27,11 +31,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  return await processQuestion(question, history);
+  return await processQuestion(req, question, history);
 }
 
-async function processQuestion(question: string, history: ChatMessages[]) {
-  const rateLimitResponse = applyRateLimit("user");
+async function processQuestion(req: NextRequest, question: string, history: ChatMessages[]) {
+  const userKey = getUserKey(req);
+  const rateLimitResponse = applyRateLimit(userKey, req);
   if (rateLimitResponse) return rateLimitResponse;
 
   try {
