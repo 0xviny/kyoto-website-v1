@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MoreVertical, Trash, Pencil, Bookmark } from "lucide-react";
+import { MoreVertical, Trash, Pencil, Bookmark, Trash2 } from "lucide-react";
 import Modal from "./modals";
 import Notification from "./notifications";
 
@@ -75,6 +75,11 @@ export default function ChatSidebar() {
     }, {});
   };
 
+  const deleteAllChats = () => {
+    localStorage.clear();
+    setChatList([]);
+  };
+
   const deleteChat = (id: string) => {
     const updatedChats = chatList.filter((chat) => chat.id !== id);
     setChatList(updatedChats);
@@ -114,64 +119,83 @@ export default function ChatSidebar() {
   return (
     <aside className="w-full md:w-72 h-screen bg-zinc-800 text-white p-4 border-r border-zinc-900 fixed z-50">
       <ul className="relative top-16 space-y-4">
-        {Object.entries(groupedChats).slice().reverse().map(([category, chatList]) => (
-          <div key={category}>
-            <h3 className="text-gray-400 text-sm mb-2">{category}</h3>
-            {chatList.slice().reverse().map((chat) => (
-              <li key={chat.id} className="relative group flex items-center justify-between">
-                <Link
-                  href={`/chat/${chat.id}`}
-                  className={`block px-3 py-2 flex-1 rounded-md transition-all ${
-                    pathname === `/chat/${chat.id}`
-                      ? "bg-zinc-700 text-white"
-                      : "hover:bg-zinc-700 text-gray-300"
-                  }`}
-                >
-                  {chat.title.length > 20 ? chat.title.slice(0, 25) + "..." : chat.title}
-                </Link>
+        {chatList.length > 0 ? (
+          Object.entries(groupedChats)
+            .slice()
+            .reverse()
+            .map(([category, chatList]) => (
+              <div key={category}>
+                <h3 className="text-gray-400 text-sm mb-2">{category}</h3>
+                {chatList
+                  .slice()
+                  .reverse()
+                  .map((chat) => (
+                    <li key={chat.id} className="relative group flex items-center justify-between">
+                      <Link
+                        href={`/chat/${chat.id}`}
+                        className={`block px-3 py-2 flex-1 rounded-md transition-all ${
+                          pathname === `/chat/${chat.id}`
+                            ? "bg-zinc-700 text-white"
+                            : "hover:bg-zinc-700 text-gray-300"
+                        }`}
+                      >
+                        {chat.title.length > 20
+                          ? chat.title.slice(0, 25).replaceAll("**", "") + "..."
+                          : chat.title.replaceAll("**", "")}
+                      </Link>
 
-                <button
-                  onClick={() => setDropdownOpen(dropdownOpen === chat.id ? null : chat.id)}
-                  className="p-1"
-                >
-                  <MoreVertical size={18} />
-                </button>
+                      <button
+                        onClick={() => setDropdownOpen(dropdownOpen === chat.id ? null : chat.id)}
+                        className="p-1"
+                      >
+                        <MoreVertical size={18} />
+                      </button>
 
-                {dropdownOpen === chat.id && (
-                  <div
-                    ref={dropdownRef}
-                    className="absolute right-3 top-7 w-40 bg-zinc-900 border border-zinc-700 shadow-md rounded-md z-20"
-                  >
-                    <button
-                      onClick={() => {
-                        setSelectedChatId(chat.id);
-                        setNewChatTitle(chat.title);
-                        setRenameModalOpen(true);
-                        setDropdownOpen(null);
-                      }}
-                      className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-zinc-700"
-                    >
-                      <Pencil size={16} /> Renomear
-                    </button>
-                    <button
-                      onClick={() => saveChatLink(chat.id)}
-                      className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-zinc-700"
-                    >
-                      <Bookmark size={16} /> Salvar Link
-                    </button>
-                    <button
-                      onClick={() => confirmDeleteChat(chat.id)}
-                      className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:bg-red-700 hover:text-white"
-                    >
-                      <Trash size={16} /> Apagar
-                    </button>
-                  </div>
-                )}
-              </li>
-            ))}
-          </div>
-        ))}
+                      {dropdownOpen === chat.id && (
+                        <div
+                          ref={dropdownRef}
+                          className="absolute right-3 top-7 w-40 bg-zinc-900 border border-zinc-700 shadow-md rounded-md z-20"
+                        >
+                          <button
+                            onClick={() => {
+                              setSelectedChatId(chat.id);
+                              setNewChatTitle(chat.title);
+                              setRenameModalOpen(true);
+                              setDropdownOpen(null);
+                            }}
+                            className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-zinc-700"
+                          >
+                            <Pencil size={16} /> Renomear
+                          </button>
+                          <button
+                            onClick={() => saveChatLink(chat.id)}
+                            className="w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-zinc-700"
+                          >
+                            <Bookmark size={16} /> Salvar Link
+                          </button>
+                          <button
+                            onClick={() => confirmDeleteChat(chat.id)}
+                            className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:bg-red-700 hover:text-white"
+                          >
+                            <Trash size={16} /> Apagar
+                          </button>
+                        </div>
+                      )}
+                    </li>
+                  ))}
+              </div>
+            ))
+        ) : (
+          <p className="text-gray-400">Nenhum chat encontrado...</p>
+        )}
       </ul>
+
+      <button
+        onClick={deleteAllChats}
+        className="absolute bottom-4 right-4 p-2 text-red-600 rounded-lg hover:bg-zinc-700 transition"
+      >
+        <Trash2 />
+      </button>
 
       <Modal
         isOpen={isDeleteModalOpen}

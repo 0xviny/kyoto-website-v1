@@ -8,7 +8,7 @@ export default function Home() {
 
   useEffect(() => {
     Router.push("/chat");
-  }, [Router]);
+  }, []);
 
   return <></>;
 }

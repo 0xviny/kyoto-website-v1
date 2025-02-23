@@ -3,18 +3,19 @@ import { NextResponse } from "next/server";
 interface RequestCount {
   count: number;
   timestamp: number;
-  blockedUntil?: number; // Tempo até quando o usuário está bloqueado
+  blockedUntil?: number;
 }
 
 const requestCounts: { [key: string]: RequestCount } = {};
 const RATE_LIMIT = 15;
 const RATE_LIMIT_WINDOW = 60 * 1000;
-const BLOCK_DURATION = 24 * 60 * 60 * 1000; // 1 dia em milissegundos
+const BLOCK_DURATION = 24 * 60 * 60 * 1000;
 
 const allowedOrigins = [
   "https://www.kyotobot.site",
   "https://kyotobot.site",
-  "https://kyotobot.vercel.app"
+  "https://kyotobot.vercel.app",
+  "http://localhost:3000",
 ];
 
 export function applyRateLimit(userKey: string, req: Request) {
@@ -29,12 +30,10 @@ export function applyRateLimit(userKey: string, req: Request) {
     );
   }
 
-  // Inicializa o usuário se não existir
   if (!requestCounts[userKey]) {
     requestCounts[userKey] = { count: 0, timestamp: currentTime };
   }
 
-  // Verifica se o usuário está bloqueado
   if (requestCounts[userKey].blockedUntil && currentTime < requestCounts[userKey].blockedUntil) {
     return NextResponse.json(
       { response: `Você está bloqueado até ${new Date(requestCounts[userKey].blockedUntil).toLocaleString()}. Tente novamente mais tarde.` },
@@ -45,7 +44,6 @@ export function applyRateLimit(userKey: string, req: Request) {
   const timePassed = currentTime - requestCounts[userKey].timestamp;
 
   if (timePassed > RATE_LIMIT_WINDOW) {
-    // Redefine a contagem se o intervalo de tempo passou
     requestCounts[userKey] = { count: 1, timestamp: currentTime };
   } else {
     if (requestCounts[userKey].count >= RATE_LIMIT) {
@@ -59,5 +57,5 @@ export function applyRateLimit(userKey: string, req: Request) {
     requestCounts[userKey].count++;
   }
 
-  return null; // Sem erro, pode continuar
+  return null;
 }

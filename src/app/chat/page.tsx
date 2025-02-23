@@ -62,11 +62,14 @@ export default function ChatPage() {
       setIsMobile(window.innerWidth < 768);
     };
 
+    if (isMobile) setIsSidebarOpen(false);
+    else setIsSidebarOpen(true);
+
     handleResize();
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -267,23 +270,28 @@ export default function ChatPage() {
                   <div key={category}>
                     <h3 className="text-gray-400 text-sm mb-2">{category}</h3>
                     {chatList.length > 0 ? (
-                      chatList.map((chat) => (
-                        <li
-                          key={chat.id}
-                          className="relative group flex items-center justify-between"
-                        >
-                          <Link
-                            href={`/chat/${chat.id}`}
-                            className={`block px-3 py-2 flex-1 rounded-md transition-all ${
-                              pathname === `/chat/${chat.id}`
-                                ? "bg-zinc-700 text-white"
-                                : "hover:bg-zinc-700 text-gray-300"
-                            }`}
+                      chatList
+                        .slice()
+                        .reverse()
+                        .map((chat) => (
+                          <li
+                            key={chat.id}
+                            className="relative group flex items-center justify-between"
                           >
-                            {chat.title.length > 20 ? chat.title.slice(0, 100) + "..." : chat.title}
-                          </Link>
-                        </li>
-                      ))
+                            <Link
+                              href={`/chat/${chat.id}`}
+                              className={`block px-3 py-2 flex-1 rounded-md transition-all ${
+                                pathname === `/chat/${chat.id}`
+                                  ? "bg-zinc-700 text-white"
+                                  : "hover:bg-zinc-700 text-gray-300"
+                              }`}
+                            >
+                              {chat.title.length > 20
+                                ? chat.title.slice(0, 100).replaceAll("**", "") + "..."
+                                : chat.title.replaceAll("**", "")}
+                            </Link>
+                          </li>
+                        ))
                     ) : (
                       <p className="text-gray-400">Nenhum chat encontrado...</p>
                     )}

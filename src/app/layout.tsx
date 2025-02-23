@@ -8,7 +8,6 @@ export const metadata: Metadata = {
   title: "Kyoto",
   description:
     "Kyoto uma aplicação feita para poder agilizar o seu dia a dia com respostas inteligentes e rápidas, ultimamente desenvolvida utilizando as melhores tecnlogias do mercado.",
-  themeColor: "#000000",
   icons: "/chatbot-icon.png",
 };
 
