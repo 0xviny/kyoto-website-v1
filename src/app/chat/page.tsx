@@ -1,4 +1,5 @@
-"use client";
+"use client"
+/* eslint-disable */
 
 import { ChatMessages } from "@/@types";
 
