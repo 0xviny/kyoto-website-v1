@@ -98,7 +98,7 @@ export default function ChatLayout({ messages, isLoading, onSendMessage, randomQ
             </p>
 
             <div className="flex justify-center flex-wrap gap-3 mt-10">
-  {randomQuestions && randomQuestions.map((question, index) => (
+  {randomQuestion && randomQuestion.map((question, index) => (
     <button
       key={index}
       onClick={() => onSendMessage(question)}
