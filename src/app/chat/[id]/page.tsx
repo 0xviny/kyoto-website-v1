@@ -70,14 +70,6 @@ export default function ChatPageId() {
   }, []);
 
   useEffect(() => {
-    if (isMobile) {
-      setIsSidebarOpen(false);
-    } else {
-      setIsSidebarOpen(true);
-    }
-  });
-
-  useEffect(() => {
     const storedChats = localStorage.getItem("chat_list");
     if (storedChats) {
       setAllChats(JSON.parse(storedChats));

@@ -1,5 +1,4 @@
 "use client"
-/* eslint-disable */
 
 import { ChatMessages } from "@/@types";
 
@@ -8,12 +7,13 @@ import ChatLayout from "@/components/chat/layout";
 import ChatSidebar from "@/components/layout/sidebar";
 
 import { useChat } from "@/providers/chatProvider";
+import { generateQuestions } from "@/services/generateQuestions";
 import { generateChatTitle } from "@/services/generateTitle";
 
 import { List, Search, SquarePen, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 interface ChatItem {
@@ -32,9 +32,21 @@ export default function ChatPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [randomQuestion, setRandomQuestion] = useState<string[]>([]);
+
   const modalRef = useRef<HTMLDivElement>(null);
 
   const pathname = usePathname();
+
+  useEffect(() => {
+    const loadQuestions = async () => {
+      const generatedQuestions = await generateQuestions();
+      console.log("Perguntas geradas:", generatedQuestions);
+      setRandomQuestion(generatedQuestions);
+    };
+
+    loadQuestions();
+  }, []);
 
   useEffect(() => {
     const pathParts = window.location.pathname.split("/");
@@ -77,14 +89,6 @@ export default function ChatPage() {
       setIsSidebarOpen(false);
     }
   };
-
-  useEffect(() => {
-    if (isMobile) {
-      setIsSidebarOpen(false);
-    } else {
-      setIsSidebarOpen(true);
-    }
-  });
 
   const categorizeChats = (chats: ChatItem[]) => {
     const now = Date.now();
@@ -232,7 +236,7 @@ export default function ChatPage() {
         }`}
       >
         <div className="flex flex-col w-full max-w-[900px] flex-1 overflow-y-auto">
-          <ChatLayout messages={messages} isLoading={isLoading} onSendMessage={handleMessageSend} />
+          <ChatLayout messages={messages} isLoading={isLoading} onSendMessage={handleMessageSend} randomQuestion={randomQuestion} />
         </div>
         <ChatInput onMessageSend={handleMessageSend} />
         <p className="text-xs text-white/75">

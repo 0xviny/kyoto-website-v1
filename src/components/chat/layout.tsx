@@ -1,5 +1,4 @@
 "use client";
-/* eslint-disable */
 
 import { ChatProps } from "@/@types";
 
@@ -9,28 +8,16 @@ import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 import { useEffect, useState } from "react";
 import { AudioLines, Copy, CopyCheckIcon, Edit3 } from "lucide-react";
-import { generateQuestions } from "@/services/generateQuestions";
 import { generateResponse } from "@/services/generateResponse";
 import { usePathname } from "next/navigation";
 
-export default function ChatLayout({ messages, isLoading, onSendMessage }: ChatProps) {
+export default function ChatLayout({ messages, isLoading, onSendMessage, randomQuestion }: ChatProps) {
   const [copyCode, setCopyCode] = useState<number | null>(null);
-  const [randomQuestion, setRandomQuestion] = useState<string[]>([]);
   const [editMessageIndex, setEditMessageIndex] = useState<number | null>(null);
   const [editedMessage, setEditedMessage] = useState<string>("");
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
 
   const currentChatId = usePathname().split("/")[2];
-
-  useEffect(() => {
-    const loadQuestions = async () => {
-      const generatedQuestions = await generateQuestions();
-      console.log("Perguntas geradas:", generatedQuestions);
-      setRandomQuestion(generatedQuestions);
-    };
-
-    loadQuestions();
-  }, []);
 
   useEffect(() => {
     const loadVoices = () => {
@@ -47,7 +34,7 @@ export default function ChatLayout({ messages, isLoading, onSendMessage }: ChatP
     };
   }, []);
 
-  const handlePlayAudio = (code: string, index: number) => {
+  const handlePlayAudio = (code: string) => {
     const cleanText = code.replace(/[\p{Emoji}]/gu, "");
 
     const synth = window.speechSynthesis;
@@ -111,7 +98,7 @@ export default function ChatLayout({ messages, isLoading, onSendMessage }: ChatP
             </p>
 
             <div className="flex justify-center flex-wrap gap-3 mt-10">
-              {randomQuestion.map((question, index) => (
+              {randomQuestion!.map((question, index) => (
                 <button
                   key={index}
                   onClick={() => onSendMessage(question)}
@@ -210,7 +197,7 @@ export default function ChatLayout({ messages, isLoading, onSendMessage }: ChatP
                     </button>
                     <button
                       onClick={() =>
-                        handlePlayAudio(Array.isArray(msg.parts) ? msg.parts[0] : "", index)
+                        handlePlayAudio(Array.isArray(msg.parts) ? msg.parts[0] : "")
                       }
                       className="mt-2 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
                       style={{ bottom: "-2.5rem" }}

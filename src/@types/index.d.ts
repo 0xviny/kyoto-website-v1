@@ -22,5 +22,6 @@ export interface ChatSession {
 export interface ChatProps {
   messages: ChatMessages[];
   isLoading: boolean;
+  randomQuestion?: string[];
   onSendMessage: (message: string) => void;
 }
