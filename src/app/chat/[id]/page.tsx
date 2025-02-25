@@ -39,9 +39,11 @@ export default function ChatPageId() {
       const storedMessages = localStorage.getItem(`chat_message/${id}`);
       if (storedMessages) {
         setMessages(JSON.parse(storedMessages) as ChatMessages[]);
+      } else {
+        router.push("/chat/");
       }
     }
-  }, [id, setMessages]);
+  }, [id, setMessages, router]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
