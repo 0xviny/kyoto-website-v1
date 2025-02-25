@@ -20,6 +20,7 @@ export default function ChatSidebar() {
   const [newChatTitle, setNewChatTitle] = useState<string>("");
   const [notificationVisible, setNotificationVisible] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
+  const [deleteAllChatsConfirmation, setDeleteAllChatsConfirmation] = useState(false);
 
   const pathname = usePathname();
   const route = useRouter();
@@ -91,13 +92,20 @@ export default function ChatSidebar() {
   };
 
   const confirmDeleteAllChats = () => {
+    setDeleteAllChatsConfirmation(true);
     setDeleteModalOpen(true);
     setDropdownOpen(null);
+  };
+
+  const handleConfirmDeleteAllChats = () => {
     deleteAllChats();
+    setDeleteModalOpen(false);
+    setDeleteAllChatsConfirmation(false);
   };
 
   const confirmDeleteChat = (id: string) => {
     setSelectedChatId(id);
+    setDeleteAllChatsConfirmation(false);
     setDeleteModalOpen(true);
     setDropdownOpen(null);
   };
@@ -205,34 +213,15 @@ export default function ChatSidebar() {
         <Trash2 />
       </button>
 
-      <button
-        onClick={() => route.push("/download")}
-        className="absolute flex items-center justify-center bottom-4 left-4 p-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-700 transition"
-      >
-        <Sparkles className="inline-block mr-2 text-yellow-400" /> Baixe nosso aplicativo!
-      </button>
-
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        onConfirm={() => deleteChat(selectedChatId!)}
+        onConfirm={deleteAllChatsConfirmation ? handleConfirmDeleteAllChats : () => deleteChat(selectedChatId!)}
         title="Confirmar Exclusão"
-        message="Você tem certeza que deseja excluir este chat?"
-      />
-      <Modal
-        isOpen={isRenameModalOpen}
-        onClose={() => setRenameModalOpen(false)}
-        onConfirm={renameChat}
-        title="Renomear Chat"
-        inputValue={newChatTitle}
-        onInputChange={setNewChatTitle}
-      />
+        message={deleteAllChatsConfirmation ? "Você tem certeza que deseja excluir todos os chats?" : "Você tem certeza que deseja excluir este chat?"}
+/>
 
-      <Notification
-        isVisible={notificationVisible}
-        message={notificationMessage}
-        onClose={() => setNotificationVisible(false)}
-      />
+      <Notification isVisible={notificationVisible} message={notificationMessage} onClose={() => setNotificationVisible(false)} />
     </aside>
   );
 }
