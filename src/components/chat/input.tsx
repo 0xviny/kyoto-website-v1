@@ -1,5 +1,5 @@
 import { Globe, SendHorizonal } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 
 export default function ChatInput({
   onMessageSend,
@@ -15,11 +15,7 @@ export default function ChatInput({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim()) {
-      if (isSearchMode) {
-        onWebSearch!(input); // Faz a busca na web
-      } else {
-        onMessageSend(input); // Envia para o bot responder
-      }
+      onMessageSend(input); // Envia para o bot responder
       setInput("");
     }
   };
@@ -31,13 +27,6 @@ export default function ChatInput({
     }
   };
 
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  }, [input]);
-
   return (
     <div className="w-full max-w-[800px] p-4 bg-zinc-800 rounded-lg">
       {/* Input */}
@@ -46,9 +35,9 @@ export default function ChatInput({
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
-        className="w-full bg-transparent text-white placeholder-white/50 border-none outline-none resize-none p-3 text-base"
+        className="w-full max-h-[1000px] bg-transparent text-white placeholder-white/50 border-none 
+          outline-none resize-none p-3 text-base overflow-y-auto"
         placeholder="Pergunte algo ou pesquise na web"
-        rows={1}
       />
 
       {/* Barra de botões */}
