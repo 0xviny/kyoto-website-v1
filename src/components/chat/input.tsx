@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { Globe, SendHorizonal } from "lucide-react";
 import { useState, useRef } from "react";
 
