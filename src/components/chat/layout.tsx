@@ -98,16 +98,16 @@ export default function ChatLayout({ messages, isLoading, onSendMessage, randomQ
             </p>
 
             <div className="flex justify-center flex-wrap gap-3 mt-10">
-              {randomQuestion!.map((question, index) => (
-                <button
-                  key={index}
-                  onClick={() => onSendMessage(question)}
-                  className="bg-zinc-800 text-white p-4 w-[300px] rounded-sm text-left hover:shadow-lg hover:bg-zinc-700 transition"
-                >
-                  {question}
-                </button>
-              ))}
-            </div>
+  {randomQuestions && randomQuestions.map((question, index) => (
+    <button
+      key={index}
+      onClick={() => onSendMessage(question)}
+      className="bg-zinc-800 text-white p-4 w-[300px] rounded-sm text-left hover:shadow-lg hover:bg-zinc-700 transition"
+    >
+      {question}
+    </button>
+  ))}
+</div>
           </div>
         ) : (
           messages.map((msg, index) => (
