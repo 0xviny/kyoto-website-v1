@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { ChatMessages } from "@/@types";
 
@@ -223,7 +223,10 @@ export default function ChatPage() {
           )}
 
           <button
-            onClick={() => router.push("/")}
+            onClick={() => {
+              router.push("/chat");
+              window.location.reload();
+            }}
             className="text-white p-2 rounded-lg hover:bg-zinc-700 transition"
           >
             <SquarePen />
@@ -236,7 +239,12 @@ export default function ChatPage() {
         }`}
       >
         <div className="flex flex-col w-full max-w-[900px] flex-1 overflow-y-auto">
-          <ChatLayout messages={messages} isLoading={isLoading} onSendMessage={handleMessageSend} randomQuestion={randomQuestion} />
+          <ChatLayout
+            messages={messages}
+            isLoading={isLoading}
+            onSendMessage={handleMessageSend}
+            randomQuestion={randomQuestion}
+          />
         </div>
         <ChatInput onMessageSend={handleMessageSend} />
         <p className="text-xs text-white/75">
@@ -266,7 +274,10 @@ export default function ChatPage() {
             <ul className="max-h-60 overflow-y-auto space-y-2">
               <li className="p-2 hover:bg-zinc-800 rounded-md">
                 <button
-                  onClick={() => router.push("/")}
+                  onClick={() => {
+                    router.push("/chat");
+                    window.location.reload();
+                  }}
                   className="flex items-center gap-2 text-white"
                 >
                   <SquarePen size={18} /> Criar novo chat

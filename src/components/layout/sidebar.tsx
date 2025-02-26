@@ -15,6 +15,7 @@ export default function ChatSidebar() {
   const [chatList, setChatList] = useState<ChatItem[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteAll, setDeleteAll] = useState(false);
   const [isRenameModalOpen, setRenameModalOpen] = useState(false);
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [newChatTitle, setNewChatTitle] = useState<string>("");
@@ -91,15 +92,25 @@ export default function ChatSidebar() {
   };
 
   const confirmDeleteAllChats = () => {
+    setDeleteAll(true);
     setDeleteModalOpen(true);
     setDropdownOpen(null);
-    deleteAllChats();
   };
 
   const confirmDeleteChat = (id: string) => {
     setSelectedChatId(id);
+    setDeleteAll(false);
     setDeleteModalOpen(true);
     setDropdownOpen(null);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deleteAll) {
+      deleteAllChats();
+    } else if (selectedChatId) {
+      deleteChat(selectedChatId);
+    }
+    setDeleteModalOpen(false);
   };
 
   const renameChat = () => {
@@ -215,9 +226,13 @@ export default function ChatSidebar() {
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        onConfirm={() => deleteChat(selectedChatId!)}
+        onConfirm={handleConfirmDelete}
         title="Confirmar Exclusão"
-        message="Você tem certeza que deseja excluir este chat?"
+        message={
+          deleteAll
+            ? "Tem certeza que deseja excluir todos os chats?"
+            : "Tem certeza que deseja excluir este chat?"
+        }
       />
       <Modal
         isOpen={isRenameModalOpen}
