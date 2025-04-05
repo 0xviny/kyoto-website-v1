@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+  <img src="https://kyotobot.vercel.app/chatbot-icon.png" alt="Descrição da imagem" />
+</p>
 
-## Getting Started
+# Kyoto: A Inteligência Artificial para o Seu Dia a Dia
 
-First, run the development server:
+## Introdução
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Kyoto é uma inteligência artificial inovadora desenvolvida pela API do Gemini, projetada para tornar a sua vida mais prática e eficiente. Com a crescente demanda por soluções que facilitem tarefas cotidianas, Kyoto surge como uma ferramenta essencial para otimizar o tempo e melhorar a produtividade.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## O que é Kyoto?
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Kyoto é uma IA avançada que utiliza algoritmos de aprendizado de máquina para compreender e antecipar as necessidades dos usuários. Com uma interface intuitiva e amigável, ela se integra facilmente às rotinas diárias, oferecendo suporte em diversas áreas, como gerenciamento de tarefas, recomendações personalizadas e automação de processos.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Funcionalidades
 
-## Learn More
+### 1. **Gerenciamento de Tarefas**
+Kyoto ajuda a organizar suas atividades diárias, permitindo que você crie, edite e priorize suas tarefas de forma simples e eficiente.
 
-To learn more about Next.js, take a look at the following resources:
+### 2. **Recomendações Personalizadas**
+Com base em suas preferências e histórico de uso, Kyoto oferece sugestões personalizadas que vão desde entretenimento até dicas de produtividade.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. **Automação de Processos**
+Kyoto pode automatizar tarefas repetitivas, liberando seu tempo para que você se concentre em atividades mais importantes.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 4. **Integração com Outros Serviços**
+A IA se conecta facilmente a outras ferramentas e serviços que você já utiliza, proporcionando uma experiência coesa e sem interrupções.
 
-## Deploy on Vercel
+## Benefícios
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Praticidade:** Simplifica a gestão do dia a dia, permitindo que você se concentre no que realmente importa.
+- **Eficiência:** Aumenta a produtividade, automatizando tarefas e oferecendo recomendações úteis.
+- **Personalização:** Adapta-se às suas preferências, garantindo que você receba o suporte que realmente precisa.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Como Começar
+
+Para começar a usar Kyoto, basta acessar a API do Gemini e seguir as instruções para integração. A documentação completa está disponível [aqui](https://www.geminiapi.com/documentation) (link fictício).
+
+## Conclusão
+
+Kyoto é mais do que uma ferramenta; é uma assistente virtual projetada para transformar a maneira como você gerencia seu tempo e suas tarefas. Com sua inteligência adaptativa e funcionalidades robustas, Kyoto está aqui para facilitar a sua vida e tornar cada dia mais produtivo.
+
+## Contribuições
+
+Se você deseja contribuir para o desenvolvimento de Kyoto ou compartilhar suas experiências, sinta-se à vontade para abrir uma issue ou pull request. Juntos, podemos tornar esta IA ainda mais útil para todos!
+
+## Licença
+
+Este projeto é licenciado sob a [MIT License](LICENSE).
