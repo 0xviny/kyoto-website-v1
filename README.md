@@ -34,7 +34,7 @@ A IA se conecta facilmente a outras ferramentas e serviços que você já utiliz
 
 ## Como Começar
 
-Para começar a usar Kyoto, basta acessar a API do Gemini e seguir as instruções para integração. A documentação completa está disponível [aqui](https://www.geminiapi.com/documentation) (link fictício).
+Para começar a usar Kyoto, basta acessar ao (link)[https://kyotobot.vercel.app/]
 
 ## Conclusão
 
